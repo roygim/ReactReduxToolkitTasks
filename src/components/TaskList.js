@@ -1,22 +1,30 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Task from "./Task";
-import { markAllAsCompleted, deleteCompletedTask } from "../state/slices/tasksSlice";
+import { markAllAsCompleted, deleteCompletedTask, getAllTaksAsync } from "../state/slices/tasksSlice";
 
 const TaskList = () => {
   const dispatch = useDispatch()
-  const tasks = useSelector((state) => state.tasks.data)
+  const tasks = useSelector((state) => state.tasks.data.allTasks)
+  const usersData = useSelector((state) => state.tasks.users)
   const [hasCompletedTask, setHasCompletedTask] = useState(false)
 
   useEffect(() => {
+    if(usersData) {
+      console.log(usersData)
+    }    
+  }, [usersData])
+
+  useEffect(() => {
     if(tasks) {
-      const taskComplete = tasks.findIndex((t) => t.completed)
+      const taskComplete = tasks.findIndex((t) => t.isComplete)
       setHasCompletedTask(taskComplete !== -1)
     }    
   }, [tasks])
 
   const handleMarkAll = () => {
     dispatch(markAllAsCompleted())
+    dispatch(getAllTaksAsync())
   }
 
   const handleDeleteComleted = () => {
